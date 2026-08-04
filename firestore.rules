@@ -1,0 +1,45 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Cada persona solo puede leer su PROPIO documento de rol (para saber si es
+    // mesero, cocina o admin al entrar). Se crea a mano desde Firestore Console,
+    // así que no se permite escribir desde la app.
+    match /staff/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    // Pedidos: cualquier persona que haya iniciado sesión puede leer/escribir.
+    // (Ya con login real por rol; si más adelante quieres, por ejemplo, que cocina
+    // no pueda marcar una cuenta como pagada, aquí es donde se agregaría esa regla
+    // revisando el rol guardado en /staff/{request.auth.uid}.)
+    match /orders/{orderId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Inventario: igual, cualquier persona con sesión iniciada puede leer/escribir.
+    match /inventory/{itemId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Historial de ventas ya cobradas (hora, productos, método de pago, cambio, etc.)
+    match /sales/{saleId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Aperturas y cierres de caja.
+    match /registerEvents/{eventId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Menú: cualquier persona con sesión iniciada puede leer (el mesero necesita verlo
+    // para armar pedidos) y escribir. La pantalla para AGREGAR/QUITAR productos solo
+    // aparece en la vista de admin, pero a nivel de base de datos cualquier cuenta
+    // logueada podría escribir aquí — mismo nivel de restricción que orders/inventory.
+    match /menu/{itemId} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}

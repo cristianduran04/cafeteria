@@ -1,0 +1,6 @@
+app/node_modules/
+app/dist/
+app/.env
+node_modules/
+dist/
+.env

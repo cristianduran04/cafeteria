@@ -1,0 +1,19 @@
+# React
+app/node_modules/
+app/dist/
+
+# Variables privadas
+app/.env
+
+# Logs
+*.log
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# VSCode
+.vscode/
+
+# IDE
+.idea/
